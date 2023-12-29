@@ -1,0 +1,56 @@
+# Read data from 'comprincipales.txt' into 'datos' DataFrame, setting the first row as header and first column as row names
+datos <- read.table("comprincipales.txt", header = T, row.names = 1) 
+
+# Attach 'datos' DataFrame to the R search path for direct access to its variables
+attach(datos)
+
+# Provide a summary (like min, max, mean, etc.) for each variable in 'datos'
+summary(datos)
+
+# Create a scatterplot matrix of all variables in 'datos'
+plot(datos)
+
+# Calculate the correlation matrix for all variables in 'datos'
+cor(datos)
+
+# Load the 'ade4' package for multivariate data analysis
+library(ade4) 
+
+# Perform Principal Component Analysis (PCA) on 'datos', allowing user interaction to choose number of dimensions, using 2 dimensions
+acp <- dudi.pca(df = datos, scannf = T, nf = 2)
+
+# Calculate and store inertia (variance) information for both rows and columns from PCA result
+acpi <- inertia.dudi(acp, row.inertia = T, col.inertia = T) 
+
+# Display the calculated inertia information
+acpi
+
+# Plot the row scores (individuals) from PCA results
+s.label(acp$li)
+
+# Plot the column scores (variables) from PCA results
+s.label(acp$co)
+
+# Create a biplot of PCA results, showing both row and column scores
+biplot(acp$co, acp$li)
+
+# Draw a correlation circle for row scores from PCA
+s.corcircle(acp$li)
+
+# Draw a correlation circle for column scores from PCA
+s.corcircle(acp$co)
+
+# Load the 'corrplot' package for visualizing correlation matrices
+library(corrplot)
+
+# Create a correlation plot of 'datos', showing only the lower triangle and highlighting significant correlations at 0.05 level
+corrplot(cor(datos), sig.level = 0.05, typ = "lower") 
+
+# Load the 'factoextra' package for visualizing PCA results
+library(factoextra)
+
+# Visualize the eigenvalues (variances) from PCA results, indicating the variance captured by each principal component
+fviz_eig(acp, addlabels = TRUE, ylim = c(0, 85))
+
+# Create a PCA variable plot, showing quality of representation on principal components, colored by 'cos2' metric with gradient colors
+fviz_pca_var(acp, col.var = "cos2", gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), repel = TRUE)
